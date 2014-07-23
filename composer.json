@@ -1,0 +1,12 @@
+{
+    "name": "flyr/sessookie",
+    "description": "Manipulate easily cookies and session cookies in PHP with new features",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Siro Diaz",
+            "email": "sirodiaz93@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
