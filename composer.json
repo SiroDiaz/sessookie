@@ -1,6 +1,7 @@
 {
     "name": "flyr/sessookie",
     "description": "Manipulate easily cookies and session cookies in PHP with new features",
+    "keywords": ["cookie", "session", "manipulate", "security"],
     "license": "MIT",
     "authors": [
         {
@@ -8,5 +9,12 @@
             "email": "sirodiaz93@gmail.com"
         }
     ],
-    "minimum-stability": "dev"
+    "autoload": {
+		"classmap": ["src/"]
+    },
+    "minimum-stability": "dev",
+    "support": {
+		"issues": "https://github.com/SiroDiaz/sessookie/issues",
+		"source": "https://github.com/SiroDiaz/sessookie"
+    }
 }
