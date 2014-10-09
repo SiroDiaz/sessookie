@@ -3,22 +3,28 @@
 class Sessookie {
 
 	/**
-	 *
+	 * the secure key(password) to encrypt and
+	 * decrypt the cookie
 	 */
 
 	protected $key;
 
 	/**
-	 *
+	 * The sufix used to the system know what cookie/s
+	 * is/are encrypted for then do reverse work
 	 */
 
 	protected $sufix;
 
+	protected $sessionKey;
+
+	protected $secureSessionName;
+
 	/**
-	 *
+	 * setup the configuration
 	 */
 
-	public function __construct($key = '', $sufix = 'e_') {
+	public function __construct($key = '', $sufix = 'e_', $ssname = 'sk') {
 		if ($key == '' || empty($key)) {
 			$this->key = null;
 		}
@@ -29,6 +35,8 @@ class Sessookie {
 
 		$this->key = $key;
 		$this->sufix = $sufix;
+		$this->secureSessionName = ($this->setSecureSessionName($ssname)) ? $ssname : 'sk';
+		$this->sessionKey = $this->generateSessionKey();
 	}
 
 	/**
@@ -38,7 +46,7 @@ class Sessookie {
 	 * @param string $type 's' for session or 'c' for cookie
 	 */
 
-	private function exists($name, $type) {
+	public function exists($name, $type) {
 		
 		if(empty($name)){
 			return false;
@@ -51,6 +59,24 @@ class Sessookie {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * set the secure session name to another value
+	 * to avoid conficts
+	 *
+	 * @param string $name The secure session name
+	 * @return bool  false if the name is empty
+	 */
+
+	private function setSecureSessionName($name) {
+		if(empty($name)) return false;
+
+		$this->secureSessionName = $name;
+	}
+
+	public function getSecureSessionName() {
+		return $this->secureSessionName;
 	}
 
 	/**
@@ -118,8 +144,21 @@ class Sessookie {
 		return $decrypted;
 	}
 
+	private function generateSessionKey() {
+		if(isset($_SESSION[$this->secureSessionName])) return false;
+
+		$_SESSION[$this->secureSessionName] = str_shuffle(uniqid(microtime(true)));
+	}
+
 	/**
+	 * Convert the time given in different units
+	 * s --> seconds
+	 * m --> minutes
+	 * h --> hours
+	 * d --> days
 	 *
+	 * @param mixed $time The duration time to convert into seconds
+	 * @return int 	Returns 0 if $time is invalid else return the timestamp 
 	 */
 
 	private function convertTime($time) {
@@ -187,8 +226,9 @@ class Sessookie {
 	/**
 	 * create a new session or update an existing session
 	 *
-	 * @param string $name  the session name
-	 * @param mixed  $value the value to assign to the session cookie
+	 * @param string $name  The session name
+	 * @param mixed  $value The value to assign to the session cookie
+	 * @param bool   $force To modify or not if the session exists (default true)
 	 * @param bool
 	 */
 
@@ -231,9 +271,15 @@ class Sessookie {
 		$names = array_keys($_COOKIE);
 		
 		if(!$len) {
+			foreach($_COOKIE as $key => &$val) {
+				$this->deleteCookie($key);
+			}
+			
+			/*
 			for($i = $len - 1; $i >= 0; $i--) {
 				$this->deleteCookie($_COOKIE[$names[$i]]);
 			}
+			*/
 		}
 	}
 
@@ -267,7 +313,7 @@ class Sessookie {
 			return false;
 		}
 
-		foreach ($_SESSION as $key => $val) {
+		foreach ($_SESSION as $key => &$val) {
 			$this->deleteSession($key);
 		}
 	}
