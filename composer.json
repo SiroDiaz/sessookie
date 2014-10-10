@@ -10,7 +10,7 @@
         }
     ],
     "autoload": {
-		"classmap": ["src/Sessookie.php"]
+		"classmap": ["src/"]
     },
     "minimum-stability": "dev",
     "support": {
